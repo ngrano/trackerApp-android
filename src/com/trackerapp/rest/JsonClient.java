@@ -25,151 +25,151 @@ import android.util.Log;
 
 public class JsonClient {
 
-   /**
-    * Sends a json GET request to a specified url and 
-    * returns a JSONObject as response.
-    * 
-    * @param uri
-    * @param data
-    * @return json object
-    */
-   public JSONObject doGet(String uri, Map<String, Object> params) {
-      HttpClient httpclient = new DefaultHttpClient();
-      HttpGet httpget = new HttpGet(uri);
-      httpget.addHeader("Content-Type", "application/json");
-      
-      // build params
-      HttpParams paramContainer = new BasicHttpParams();
-      Iterator it = params.keySet().iterator();
+    /**
+     * Sends a json GET request to a specified url and returns a JSONObject as
+     * response.
+     * 
+     * @param uri
+     * @param data
+     * @return json object
+     */
+    public JSONObject doGet(String uri, Map<String, Object> params) {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpGet httpget = new HttpGet(uri);
+        httpget.addHeader("Content-Type", "application/json");
 
-      while (it.hasNext()) {
-         String key = (String) it.next();
-         Object val = params.get(key);
-         paramContainer.setParameter(key, val);
-      }
+        // build params
+        HttpParams paramContainer = new BasicHttpParams();
+        Iterator it = params.keySet().iterator();
 
-      httpget.setParams(paramContainer);
-      HttpResponse response = null;
-      JSONObject jsonResponse = null;
+        while (it.hasNext()) {
+            String key = (String) it.next();
+            Object val = params.get(key);
+            paramContainer.setParameter(key, val);
+        }
 
-      // send the request and get response
-      try {
-         response = httpclient.execute(httpget);
-         HttpEntity entity = response.getEntity();
+        httpget.setParams(paramContainer);
+        HttpResponse response = null;
+        JSONObject jsonResponse = null;
 
-         // Build JSONObject from a string
-         if (entity != null) {
-            InputStream stream = entity.getContent();
-            jsonResponse = buildJsonObjectFromStream(stream);
-            stream.close();
-         }
-      } catch (ClientProtocolException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      } catch (IOException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      }
+        // send the request and get response
+        try {
+            response = httpclient.execute(httpget);
+            HttpEntity entity = response.getEntity();
 
-      if (jsonResponse == null) {
-         Log.i("JsonClient.doGet", "Couldn't build json response");
-         return null;
-      }
-
-      return jsonResponse;
-   }
-
-   /**
-    * Sends a json POST request to a specified url and returns
-    * a JSONObject as response.
-    * 
-    * @param uri
-    * @param data
-    * @return
-    */
-   public JSONObject doPost(String uri, JSONObject data) {
-      String jsonData = data.toString();
-      HttpClient httpclient = new DefaultHttpClient();
-      HttpPost httppost = new HttpPost(uri);
-      httppost.addHeader("Content-Type", "application/json");
-      HttpEntity entity = null;
-      JSONObject jsonResponse = null;
-
-      try {
-         entity = new StringEntity(jsonData, "UTF-8");
-         httppost.setEntity(entity);
-
-         try {
-            HttpResponse res = httpclient.execute(httppost);
-            HttpEntity resEntity = res.getEntity();
-
+            // Build JSONObject from a string
             if (entity != null) {
-               InputStream stream = resEntity.getContent();
-               jsonResponse = buildJsonObjectFromStream(stream);
-               stream.close();
+                InputStream stream = entity.getContent();
+                jsonResponse = buildJsonObjectFromStream(stream);
+                stream.close();
             }
-         } catch (ClientProtocolException e) {
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
-         } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-         }
-      } catch (UnsupportedEncodingException e) {
-         e.printStackTrace();
-      }
+        }
 
-      if (jsonResponse == null) {
-         Log.i("JsonClient.doPost", "Couldn't do a post");
-         return null;
-      }
+        if (jsonResponse == null) {
+            Log.i("JsonClient.doGet", "Couldn't build json response");
+            return null;
+        }
 
-      return jsonResponse;
-   }
+        return jsonResponse;
+    }
 
-   /**
-    * Converts InputStream to String
-    *
-    * @param jsonData
-    * @return JSONObject
-    * @throws IOException
-    */
-   protected String convertStreamToString(InputStream jsonData) throws IOException {
-      BufferedReader reader
-            = new BufferedReader(new InputStreamReader(jsonData));
+    /**
+     * Sends a json POST request to a specified url and returns a JSONObject as
+     * response.
+     * 
+     * @param uri
+     * @param data
+     * @return
+     */
+    public JSONObject doPost(String uri, JSONObject data) {
+        String jsonData = data.toString();
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(uri);
+        httppost.addHeader("Content-Type", "application/json");
+        HttpEntity entity = null;
+        JSONObject jsonResponse = null;
 
-      String line = null;
-      StringBuilder sb = new StringBuilder();
+        try {
+            entity = new StringEntity(jsonData, "UTF-8");
+            httppost.setEntity(entity);
 
-      while ((line = reader.readLine()) != null) {
-         sb.append(line + "\n");
-      }
+            try {
+                HttpResponse res = httpclient.execute(httppost);
+                HttpEntity resEntity = res.getEntity();
 
-      return sb.toString();
-   }
+                if (entity != null) {
+                    InputStream stream = resEntity.getContent();
+                    jsonResponse = buildJsonObjectFromStream(stream);
+                    stream.close();
+                }
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
-   /**
-    * Builds a json object from a stream.
-    *
-    * @param jsonData
-    * @return JSONObject
-    */
-   protected JSONObject buildJsonObjectFromStream(InputStream jsonData) {
-      JSONObject jsonObj = null;
+        if (jsonResponse == null) {
+            Log.i("JsonClient.doPost", "Couldn't do a post");
+            return null;
+        }
 
-      try {
-         jsonObj = new JSONObject(convertStreamToString(jsonData));
-      } catch (JSONException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      } catch (IOException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      }
+        return jsonResponse;
+    }
 
-      if (jsonObj == null) {
-         Log.i("JsonClient.buildJsonObject", "Couldn't build a json object");
-         return null;
-      }
+    /**
+     * Converts InputStream to String
+     * 
+     * @param jsonData
+     * @return JSONObject
+     * @throws IOException
+     */
+    protected String convertStreamToString(InputStream jsonData)
+            throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                jsonData));
 
-      return jsonObj;
-   }
+        String line = null;
+        StringBuilder sb = new StringBuilder();
+
+        while ((line = reader.readLine()) != null) {
+            sb.append(line + "\n");
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Builds a json object from a stream.
+     * 
+     * @param jsonData
+     * @return JSONObject
+     */
+    protected JSONObject buildJsonObjectFromStream(InputStream jsonData) {
+        JSONObject jsonObj = null;
+
+        try {
+            jsonObj = new JSONObject(convertStreamToString(jsonData));
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        if (jsonObj == null) {
+            Log.i("JsonClient.buildJsonObject", "Couldn't build a json object");
+            return null;
+        }
+
+        return jsonObj;
+    }
 }
