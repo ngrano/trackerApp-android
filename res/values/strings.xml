@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, main!</string>
     <string name="app_name">trackerApp</string>
+    <string name="send_location_once">Send location</string>
 </resources>
