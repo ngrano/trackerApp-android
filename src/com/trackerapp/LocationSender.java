@@ -2,19 +2,40 @@ package com.trackerapp;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.trackerapp.rest.JsonClient;
 
 public class LocationSender implements LocationListener {
+    private LocationManager mLocationManager = null;
+    private boolean mPeriodicalUpdate = false;
+    private Properties mApiProperties = null;
     private String mApiKey = null;
+
+    public LocationSender(Properties apiProperties) {
+        mApiProperties = apiProperties;
+    }
+
+    public void setLocationManager(LocationManager manager) {
+        mLocationManager = manager;
+    }
+
+    public void setPeriodicalUpdate(boolean isPeriodical) {
+        mPeriodicalUpdate = isPeriodical;
+    }
+
+    public boolean isPeriodicalUpdate() {
+        return mPeriodicalUpdate;
+    }
 
     public void setApiKey(String key) {
         mApiKey = key;
@@ -41,7 +62,7 @@ public class LocationSender implements LocationListener {
         }
 
         JSONObject response = client.doPost(
-                TrackerAppActivity.getLocationApiUri() + ".json", request);
+                getLocationApiUrl() + ".json", request);
 
         if (response != null) {
             Log.e("locationsender.send", response.toString());
@@ -50,8 +71,22 @@ public class LocationSender implements LocationListener {
         }
     }
 
+    private String getLocationApiUrl() {
+        if (mApiProperties == null) {
+            return "";
+        }
+
+        String domain = (String) mApiProperties.get("domain");
+        String locations = (String) mApiProperties.get("locations");
+        return domain + locations;
+    }
+
     public void onLocationChanged(Location location) {
         send(location);
+
+        if (!mPeriodicalUpdate) {
+            mLocationManager.removeUpdates(this);
+        }
     }
 
     public void onProviderDisabled(String arg0) {
