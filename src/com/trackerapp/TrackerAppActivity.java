@@ -7,6 +7,7 @@ import java.util.Properties;
 import com.trackerapp.rest.JsonClient;
 
 import android.app.Activity;
+import android.app.TabActivity;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.location.LocationListener;
@@ -16,7 +17,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class TrackerAppActivity extends Activity {
+public class TrackerAppActivity extends TabActivity {
+    public static final String API_PROPERTIES_FILE = "api.properties";
+
     private LocationManager mLocationManager = null;
     private LocationSender mLocationSender = null;
     private String mLocationProvider = null;
@@ -45,7 +48,7 @@ public class TrackerAppActivity extends Activity {
         AssetManager assetManager = res.getAssets();
 
         try {
-            InputStream in = assetManager.open("api.properties");
+            InputStream in = assetManager.open(API_PROPERTIES_FILE);
             mApiProperties = new Properties();
             mApiProperties.load(in);
         } catch (IOException e) {
