@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -86,14 +87,18 @@ public class SettingsActivity extends Activity {
         SharedPreferences.Editor editor = settings.edit();
 
         if (seekFreq != null) {
-            editor.putString(Integer.toString(seekFreq.getProgress()), "0");
+            editor.putString("frequency", Integer.toString(seekFreq.getProgress()));
         }
 
         if (mApiKey != null) {
             Editable text = mApiKey.getText();
-            editor.putString(text.toString(), "");
+            editor.putString("apikey", text.toString());
         }
 
-        editor.commit();
+        boolean bret = editor.commit();
+
+        if (!bret) {
+            Log.d("trackerapp.saveSettings", "could not save settings");
+        }
     }
 }
