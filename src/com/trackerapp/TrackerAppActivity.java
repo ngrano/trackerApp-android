@@ -8,6 +8,7 @@ import com.trackerapp.rest.JsonClient;
 
 import android.app.Activity;
 import android.app.TabActivity;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.location.LocationListener;
@@ -16,63 +17,35 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TabHost;
 
 public class TrackerAppActivity extends TabActivity {
-    public static final String API_PROPERTIES_FILE = "api.properties";
-
-    private LocationManager mLocationManager = null;
-    private LocationSender mLocationSender = null;
-    private String mLocationProvider = null;
-    private Properties mApiProperties = null;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        readApiProperties();
-
-        mLocationManager =
-            (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        mLocationSender = new LocationSender(mApiProperties);
-        mLocationSender.setLocationManager(mLocationManager);
-        mLocationProvider = LocationManager.GPS_PROVIDER;
-
         createLocationDatabase();
         setContentView(R.layout.main);
         initializeWidgets();
-        authenticate();
-    }
-
-    private void readApiProperties() {
-        Resources res = this.getResources();
-        AssetManager assetManager = res.getAssets();
-
-        try {
-            InputStream in = assetManager.open(API_PROPERTIES_FILE);
-            mApiProperties = new Properties();
-            mApiProperties.load(in);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    private void authenticate() {
-        // Load key from the database
-        mLocationSender.setApiKey("f3ed4cf89fee80bd2918615cade79f4f232cf596");
     }
 
     private void initializeWidgets() {
-        // Send location once button
-        final Button mSendLocationOnce =
-                (Button) findViewById(R.id.send_location_once);
+        TabHost tabHost = getTabHost();
+        TabHost.TabSpec spec;
+        Intent intent;
 
-        mSendLocationOnce.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mLocationManager.requestLocationUpdates(
-                        mLocationProvider, 0, 0, mLocationSender);
-            }
-        });
+        // Share location tab
+        intent = new Intent().setClass(this, LocationShareActivity.class);
+        spec = tabHost.newTabSpec("locationshare").setIndicator("Share location");
+        spec.setContent(R.id.shareLocation);
+        tabHost.addTab(spec);
+
+        // Settings tab
+        intent = new Intent().setClass(this, SettingsActivity.class);
+        spec = tabHost.newTabSpec("settings").setIndicator("Settings");
+        spec.setContent(R.id.settings);
+        tabHost.addTab(spec);
     }
 
     private void createLocationDatabase() {
