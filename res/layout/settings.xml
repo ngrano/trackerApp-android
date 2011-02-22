@@ -7,8 +7,7 @@
 	<TextView 
 		android:id="@+id/textView1" 
 		android:layout_height="wrap_content"
-		android:layout_width="wrap_content" 
-		android:text="@string/settings"></TextView>
+		android:layout_width="wrap_content" android:text="@string/frequency"></TextView>
 	<TextView 
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content" 
@@ -18,5 +17,8 @@
 		android:id="@+id/seekFreq" 
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent" ></SeekBar>
+	<TextView android:layout_height="wrap_content" android:id="@+id/textView2" android:layout_width="match_parent" android:paddingTop="20px" android:text="@string/apikey"></TextView>
+	<EditText android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/txtApiKey" android:textSize="10dp"></EditText>
+	<Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/save" android:layout_marginTop="10px" android:id="@+id/btnSaveSettings"></Button>
 </LinearLayout>
 
