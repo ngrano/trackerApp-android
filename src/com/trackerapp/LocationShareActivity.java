@@ -23,7 +23,7 @@ public class LocationShareActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.id.shareLocation);
+        setContentView(R.layout.locationshare);
         readApiProperties();
 
         mLocationManager =

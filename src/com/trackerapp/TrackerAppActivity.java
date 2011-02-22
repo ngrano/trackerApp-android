@@ -46,13 +46,13 @@ public class TrackerAppActivity extends TabActivity {
         // Share location tab
         intent = new Intent().setClass(this, LocationShareActivity.class);
         spec = tabHost.newTabSpec("locationshare").setIndicator("Share location");
-        spec.setContent(R.id.shareLocation);
+        spec.setContent(intent);
         tabHost.addTab(spec);
 
         // Settings tab
         intent = new Intent().setClass(this, SettingsActivity.class);
         spec = tabHost.newTabSpec("settings").setIndicator("Settings");
-        spec.setContent(R.id.settings);
+        spec.setContent(intent);
         tabHost.addTab(spec);
     }
 }
