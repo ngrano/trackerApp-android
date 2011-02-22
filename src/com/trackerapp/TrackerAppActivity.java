@@ -11,6 +11,8 @@ import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
@@ -25,9 +27,15 @@ public class TrackerAppActivity extends TabActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        createLocationDatabase();
         setContentView(R.layout.main);
         initializeWidgets();
+        sendPendingLocations();
+    }
+
+    private void sendPendingLocations() {
+        LocationsOpenHelper locationHelper = new LocationsOpenHelper(this);
+
+        // Read locations by api key
     }
 
     private void initializeWidgets() {
@@ -46,10 +54,5 @@ public class TrackerAppActivity extends TabActivity {
         spec = tabHost.newTabSpec("settings").setIndicator("Settings");
         spec.setContent(R.id.settings);
         tabHost.addTab(spec);
-    }
-
-    private void createLocationDatabase() {
-        // TODO Auto-generated method stub
-        
     }
 }
