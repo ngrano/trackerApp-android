@@ -6,4 +6,6 @@
     <string name="frequency">Frequency</string>
     <string name="apikey">API Key</string>
     <string name="save">Save</string>
+    <string name="startUpdate">Start Updater</string>
+    <string name="stopUpdate">Stop Updater</string>
 </resources>

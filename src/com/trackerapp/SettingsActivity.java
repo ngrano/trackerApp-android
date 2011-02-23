@@ -1,6 +1,7 @@
 package com.trackerapp;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,16 +10,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class SettingsActivity extends Activity {
+	
     public static final String PREFS_NAME = "trackerapp_settings";
+    private static final String TAG = SettingsActivity.class.getSimpleName();
 
 	private SeekBar seekFreq;
 	private TextView txtTest;
 	private Button mSaveSettingsButton;
 	private EditText mApiKey;
+	private Button startUpdate;
+	private Button stopUpdate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,8 @@ public class SettingsActivity extends Activity {
         txtTest = (TextView) findViewById(R.id.txtTest);
         mApiKey = (EditText) findViewById(R.id.txtApiKey);
         mSaveSettingsButton = (Button) findViewById(R.id.btnSaveSettings);
+        startUpdate = (Button) findViewById(R.id.btnUpdateStart);
+        stopUpdate = (Button) findViewById(R.id.btnUpdateStop);
 
         // Add listener to a frequency slider
         seekFreq.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -72,12 +80,35 @@ public class SettingsActivity extends Activity {
             }
         });
 
+        // Add listener to a Start update
+        startUpdate.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+        		Log.d(TAG, "onClick: Start update");
+        		startService(new Intent(SettingsActivity.this, UpdaterService.class));
+			}
+        	
+        });
+        
+        // Add listener to a Stop update
+        stopUpdate.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+        		Log.d(TAG, "onClick: Stop update");
+        		stopService(new Intent(SettingsActivity.this, UpdaterService.class));
+			}
+        	
+        });
+        
         // Add listener to a save button
         mSaveSettingsButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                saveSettings();
+            		Log.d(TAG, "onClick: Save Settings");
+            		saveSettings();     
             }
         });
     }
@@ -101,4 +132,22 @@ public class SettingsActivity extends Activity {
             Log.d("trackerapp.saveSettings", "could not save settings");
         }
     }
+    
+    /*
+     onClickListener here
+	switch (v.getId()) {
+	case R.id.btnSaveSettings:
+		Log.d(TAG, "onClick: Save Settings");
+		saveSettings();
+		break;
+	case R.id.btnUpdateStart:
+		Log.d(TAG, "onClick: Start update");
+		startService(new Intent(SettingsActivity.this, UpdaterService.class));
+		break;
+	case R.id.btnUpdateStop:
+		Log.d(TAG, "onClick: Stop update");
+		stopService(new Intent(SettingsActivity.this, UpdaterService.class));
+		break;
+	}
+    */
 }
