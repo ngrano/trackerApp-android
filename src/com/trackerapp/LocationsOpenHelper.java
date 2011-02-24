@@ -1,5 +1,6 @@
 package com.trackerapp;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -37,20 +38,17 @@ public class LocationsOpenHelper extends SQLiteOpenHelper {
     }
 
     public void insertLocation(String apiKey, Location location) {
-        String[] args = {
-                apiKey,
-                Double.toString(location.getLongitude()),
-                Double.toString(location.getLatitude())
-        };
+        ContentValues cv = new ContentValues();
+        cv.put("apikey", apiKey);
+        cv.put("longtitude", Double.toString(location.getLongitude()));
+        cv.put("latitude", Double.toString(location.getLatitude()));
+        cv.put("created_at", Long.toString(System.currentTimeMillis()));
 
         SQLiteDatabase dbWrite = getWritableDatabase();
-        String query = "INSERT INTO " + LOCATIONS_TABLE_NAME
-                + " (?, ?, ?, datetime('now'))";
+        long ret = dbWrite.insert(LOCATIONS_TABLE_NAME, null, cv);
 
-        Cursor record = dbWrite.rawQuery(query, args);
-
-        if (record == null || record.getCount() == 0) {
-            Log.d(TAG, "saveLocation: Could not save location");
+        if (ret == -1) {
+            Log.d(TAG, "insertLocation: Could not insert a location");
         }
     }
 
