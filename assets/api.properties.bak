@@ -3,5 +3,8 @@
 # A domain without trailing slash
 domain=http://192.168.11.64:3000
 
+# Environment settings (production, development)
+environment=development
+
 # API Routes
 locations=/api/v1/locations

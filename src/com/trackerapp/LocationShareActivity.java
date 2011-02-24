@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,8 @@ public class LocationShareActivity extends Activity {
     private String mLocationProvider = null;
     private Properties mApiProperties = null;
 
+    private Button mShareLocationOnceButton = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,9 +31,13 @@ public class LocationShareActivity extends Activity {
 
         mLocationManager =
             (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        mLocationProvider = LocationManager.GPS_PROVIDER;
+
         mLocationSender = new LocationSender(mApiProperties);
         mLocationSender.setLocationManager(mLocationManager);
-        mLocationProvider = LocationManager.GPS_PROVIDER;
+        mLocationSender.setConnectivityManager(
+                (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE));
+        mLocationSender.setLocationsOpenHelper(new LocationsOpenHelper(this));
 
         initializeWidgets();
         authenticate();
@@ -56,6 +63,14 @@ public class LocationShareActivity extends Activity {
     }
 
     private void initializeWidgets() {
+        mShareLocationOnceButton = (Button) findViewById(R.id.send_location_once);
+        mShareLocationOnceButton.setOnClickListener(new View.OnClickListener() {
 
+            @Override
+            public void onClick(View v) {
+                mLocationManager.requestLocationUpdates(
+                        mLocationProvider, 0, 0, mLocationSender);
+            }
+        });
     }
 }
