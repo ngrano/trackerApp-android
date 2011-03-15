@@ -5,15 +5,18 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 public class LocationShareActivity extends Activity {
+    public static final String TAG = LocationShareActivity.class.getSimpleName();
     public static final String API_PROPERTIES_FILE = "api.properties";
 
     private LocationManager mLocationManager = null;
@@ -58,8 +61,35 @@ public class LocationShareActivity extends Activity {
     }
 
     private void authenticate() {
-        // Load key from the database
-        mLocationSender.setApiKey("f3ed4cf89fee80bd2918615cade79f4f232cf596");
+        SharedPreferences settings =
+                getSharedPreferences(SettingsActivity.PREFS_NAME, 0);
+
+        String apiKey = settings.getString("apikey", null);
+        mLocationSender.setApiKey(apiKey);
+
+        if (apiKey != null) {
+            Log.i(TAG, "authenticate: Successfully authenticated");
+        } else {
+            Log.i(TAG, "authenticate: Could not authenticate");
+
+            if (mApiProperties == null) {
+                return;
+            }
+
+            String env = (String) mApiProperties.getProperty("environment", "");
+            if (env.equalsIgnoreCase("development")) {
+                Log.i(TAG, "authenticate: Trying to authenticate with dev api key");
+                apiKey = (String) mApiProperties.getProperty("apikey", "");
+
+                if (apiKey.length() == 0) {
+                    Log.i(TAG, "authenticate: Could not authenticate with a dev key");
+                    return;
+                }
+
+                mLocationSender.setApiKey(apiKey);
+                Log.i(TAG, "authenticate: Successfully authenticated with dev key");
+            }
+        }
     }
 
     private void initializeWidgets() {

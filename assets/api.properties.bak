@@ -6,5 +6,8 @@ domain=http://192.168.11.64:3000
 # Environment settings (production, development)
 environment=development
 
+# Api key (for development)
+apikey=f3ed4cf89fee80bd2918615cade79f4f232cf596
+
 # API Routes
 locations=/api/v1/locations
